@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Permanent Diaconate Resource Page | Archdiocese of Mobile</title>
+<meta name="description" content="Resources for permanent deacons and deacon candidates of the Archdiocese of Mobile.">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0e5289;
+    --navy-dark: #0a3d66;
+    --gold: #d3b45c;
+    --gold-soft: #f6efd9;
+    --ink: #1c1c1c;
+    --muted: #5f6670;
+    --bg: #faf8f3;
+    --card: #ffffff;
+    --line: #e4ded0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Source Sans 3", system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    background: #fff;
+    border-bottom: 4px solid var(--gold);
+    padding: 28px 16px;
+  }
+  header img {
+    display: block;
+    width: 100%;
+    max-width: 760px;
+    height: auto;
+    margin: 0 auto;
+  }
+  main {
+    flex: 1;
+    width: 100%;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 48px 16px 64px;
+  }
+  h1 {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(1.9rem, 4.5vw, 2.6rem);
+    color: var(--navy-dark);
+    text-align: center;
+    margin: 0 0 8px;
+    letter-spacing: 0.02em;
+  }
+  .rule {
+    width: 72px;
+    height: 2px;
+    background: var(--gold);
+    margin: 0 auto 40px;
+  }
+  .links {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--navy);
+    border-radius: 6px;
+    padding: 26px 24px;
+    text-decoration: none;
+    color: inherit;
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+  }
+  a.card:hover, a.card:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 22px rgba(14, 82, 137, .12);
+    border-top-color: var(--gold);
+    outline: none;
+  }
+  .card h2 {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-weight: 600;
+    font-size: 1.55rem;
+    color: var(--navy-dark);
+    margin: 0;
+    line-height: 1.2;
+  }
+  .card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: .98rem;
+    line-height: 1.5;
+  }
+  .card .go {
+    margin-top: auto;
+    padding-top: 8px;
+    font-weight: 600;
+    font-size: .92rem;
+    color: var(--navy);
+  }
+  .card.soon {
+    border-top-color: var(--line);
+    cursor: default;
+  }
+  .card.soon h2 { color: #6b7380; }
+  .badge {
+    align-self: flex-start;
+    margin-top: auto;
+    background: var(--gold-soft);
+    color: #7a6224;
+    border: 1px solid #e8d9a8;
+    border-radius: 999px;
+    padding: 3px 12px;
+    font-size: .8rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  footer {
+    text-align: center;
+    padding: 20px 16px 28px;
+    font-size: .82rem;
+    color: var(--muted);
+    border-top: 1px solid var(--line);
+  }
+  .help {
+    display: inline-block;
+    margin-bottom: 10px;
+    padding: 5px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--navy);
+    text-decoration: none;
+    font-size: .8rem;
+    background: #fff;
+  }
+  .help:hover, .help:focus-visible { border-color: var(--navy); }
+</style>
+</head>
+<body>
+  <header>
+    <img src="logo.png" alt="Archdiocese of Mobile — Office of the Permanent Diaconate">
+  </header>
+
+  <main>
+    <h1>Permanent Diaconate Resource Page</h1>
+    <div class="rule"></div>
+
+    <div class="links">
+      <div class="card soon" aria-disabled="true">
+        <h2>Continuing Education for Deacons</h2>
+        <p>Ongoing formation opportunities and resources for ordained deacons.</p>
+        <span class="badge">Coming Soon</span>
+      </div>
+
+      <a class="card" href="https://deaconformation.cathaom.org">
+        <h2>Deacon Candidate Resources</h2>
+        <p>Formation materials and information for aspirants and candidates.</p>
+        <span class="go">Open resources &rarr;</span>
+      </a>
+    </div>
+  </main>
+
+  <footer>
+    <a class="help" href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=oRd9zj1GiUWVp5rZiYSYR6IwQDuRCnVLpBy0ohJUADNURVNSVUg4T1pDRVQ4QVFTVUc5OTA4SU5aOS4u" target="_blank" rel="noopener">Need help with the website?</a>
+    <div>&copy; <span id="yr">2026</span> Archdiocese of Mobile &middot; Office of the Permanent Diaconate</div>
+  </footer>
+  <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+</body>
+</html>
