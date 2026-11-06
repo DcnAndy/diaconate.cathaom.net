@@ -9,7 +9,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Libre+Franklin:wght@400;500;600;700&display=swap">
-<script src="/tracker/msal-browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
@@ -141,7 +140,6 @@ footer.wrap{padding-block:0 32px;color:var(--muted);font-size:12px}
         <span id="asof">Loading responses…</span>
         <button id="refreshBtn" class="refresh" type="button" title="Reload the latest form responses">↻ Refresh</button>
       </div>
-      <span class="who" id="who" hidden></span>
     </div>
   </div>
 </header>
@@ -160,15 +158,6 @@ footer.wrap{padding-block:0 32px;color:var(--muted);font-size:12px}
 let LOGO = null;
 const LOGO_RATIO = 0.1843;
 const SNAPSHOT = null;   // null on the live site; the preview build embeds a saved copy
-/* Live data: the Microsoft Forms response workbook in OneDrive, read with the viewer's own Microsoft 365 sign-in.
-   clientId = the Entra app registration (Single-page application, redirect URI https://diaconate.cathaom.net/tracker). */
-const CONFIG = {
-  clientId: "",
-  authority: "https://login.microsoftonline.com/mobarch.org",
-  driveId: "b!TWJqZUxeXEGgAtfDZgRj9wjA7sQ4I_FEn1i3VGNXz0wVNsPgMSJRQrWjenmaZb5Z",
-  itemId: "01XQCU5RIPL46QBT7QVVDKBKDVYNG4532X",  // Deacon Continuing Education Log.xlsx
-  scopes: ["Files.Read.All"]
-};
 /* Zero-based columns of the response sheet: C = completion time, F onward = the form's questions. */
 const COLS = {submitted:2, name:5, category:6, event:7, start:8, end:9, description:10, type:11, hours:12, notes:13};
 const LIVE = !SNAPSHOT;
@@ -524,50 +513,20 @@ function pdfDeacons(list, label){
 }
 
 /* ---------- data ---------- */
-let msalApp = null, account = null, lastLoad = 0;
+/* The live site reads /api/ce-entries, a Vercel function that downloads the form's response workbook
+   through its "Anyone with the link" sharing link and returns the sheet's rows. No sign-in needed. */
+let lastLoad = 0;
 
 function gate(title, message, action){
   $("#app").innerHTML = `<section class="panel gate"><h2>${esc(title)}</h2><p>${message}</p>${action ? `<button class="primary" id="gateBtn">${esc(action.label)}</button>` : ""}</section>`;
   if(action) $("#gateBtn").onclick = action.run;
 }
-function showWho(){
-  const w = $("#who"); if(!account){ w.hidden = true; return; }
-  w.innerHTML = `Signed in as ${esc(account.name || account.username)}<button id="signOut" type="button">Sign out</button>`;
-  w.hidden = false;
-  $("#signOut").onclick = () => msalApp.logoutRedirect({account, postLogoutRedirectUri: location.origin + "/tracker"});
-}
-async function initAuth(){
-  if(!window.msal) throw new Error("The Microsoft sign-in library did not load. Reload the page.");
-  msalApp = new msal.PublicClientApplication({
-    auth:{ clientId:CONFIG.clientId, authority:CONFIG.authority, redirectUri: location.origin + "/tracker", navigateToLoginRequestUrl:true },
-    cache:{ cacheLocation:"localStorage" }
-  });
-  await msalApp.initialize();
-  const res = await msalApp.handleRedirectPromise();
-  account = res?.account || msalApp.getActiveAccount() || msalApp.getAllAccounts()[0] || null;
-  if(account) msalApp.setActiveAccount(account);
-}
-const signIn = () => msalApp.loginRedirect({scopes:CONFIG.scopes, prompt:"select_account"});
-async function getToken(){
-  try{ return (await msalApp.acquireTokenSilent({scopes:CONFIG.scopes, account})).accessToken; }
-  catch(e){
-    if(e instanceof msal.InteractionRequiredAuthError){ await msalApp.acquireTokenRedirect({scopes:CONFIG.scopes, account}); return null; }
-    throw e;
-  }
-}
-async function graph(path, tok){
-  const r = await fetch("https://graph.microsoft.com/v1.0" + path, {headers:{Authorization:"Bearer " + tok}, cache:"no-store"});
-  if(!r.ok){ const err = new Error(`Microsoft 365 returned ${r.status}.`); err.status = r.status; throw err; }
-  return r.json();
-}
 async function fetchLive(){
-  const tok = await getToken(); if(!tok) return null;
-  const base = `/drives/${CONFIG.driveId}/items/${CONFIG.itemId}`;
-  const sheets = await graph(`${base}/workbook/worksheets?$select=name`, tok);
-  const sheet = encodeURIComponent(sheets.value[0].name);
-  const range = await graph(`${base}/workbook/worksheets/${sheet}/usedRange(valuesOnly=true)?$select=values`, tok);
-  const rows = (range.values || []).slice(1).filter(r => r.some(v => v !== "" && v != null));
-  return { entries: rows.map(r => Object.fromEntries(Object.entries(COLS).map(([k,i]) => [k, r[i] ?? ""]))) };
+  const r = await fetch("/api/ce-entries", {cache:"no-store"});
+  const j = await r.json().catch(() => ({}));
+  if(!r.ok) throw new Error(j.error || `The response log could not be read (${r.status}).`);
+  const rows = (j.values || []).slice(1).filter(row => row.some(v => v !== "" && v != null));
+  return { entries: rows.map(row => Object.fromEntries(Object.entries(COLS).map(([k,i]) => [k, row[i] ?? ""]))) };
 }
 async function logoData(){
   if(LOGO) return;
@@ -583,7 +542,6 @@ async function load(manual){
   state.loading = true; btn.disabled = true; btn.textContent = "Refreshing…";
   try{
     const raw = LIVE ? await fetchLive() : SNAPSHOT;
-    if(!raw) return;                               // redirecting to sign in
     state.model = buildModel(raw);
     lastLoad = Date.now();
     const stamp = new Date().toLocaleString("en-US",{month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit"});
@@ -592,34 +550,17 @@ async function load(manual){
     render();
     if(manual) toast(LIVE ? "Latest responses loaded" : "Preview uses a saved copy of the responses");
   }catch(e){
-    const denied = e.status === 401 || e.status === 403 || e.status === 404;
-    if(state.model && !denied){ toast("Could not refresh. Showing the last loaded responses."); }
-    else if(denied){ gate("No access to the response log", "Your Microsoft 365 account can't open the Deacon Continuing Education Log. Ask the Office of the Permanent Diaconate to share the file with you, then refresh.", {label:"Try again", run:() => load(true)}); }
-    else { gate("Couldn't load responses", esc(e.message || "Something went wrong reaching Microsoft 365."), {label:"Try again", run:() => load(true)}); }
+    if(state.model) toast("Could not refresh. Showing the last loaded responses.");
+    else gate("Couldn't load responses", esc(e.message), {label:"Try again", run:() => load(true)});
   }finally{
     state.loading = false; btn.disabled = false; btn.textContent = "↻ Refresh";
   }
 }
 
-(async () => {
-  $("#refreshBtn").onclick = () => load(true);
-  logoData();
-  if(!LIVE){ load(false); return; }
-  if(!CONFIG.clientId || CONFIG.clientId.startsWith("__")){
-    gate("Setup needed", "This page needs the Entra app registration's Application (client) ID before it can read the response log.");
-    $("#asof").textContent = "Not connected"; return;
-  }
-  try{ await initAuth(); }
-  catch(e){ gate("Sign-in unavailable", esc(e.message), {label:"Reload", run:() => location.reload()}); return; }
-  if(!account){
-    $("#asof").textContent = "Sign in to load responses";
-    gate("Sign in to view the tracker", "Use your Archdiocese of Mobile Microsoft 365 account. The tracker reads the Continuing Education form responses each time it opens.", {label:"Sign in with Microsoft 365", run:signIn});
-    return;
-  }
-  showWho();
-  load(false);
-  document.addEventListener("visibilitychange", () => { if(!document.hidden && state.model && Date.now() - lastLoad > 5*60*1000) load(false); });
-})();
+$("#refreshBtn").onclick = () => load(true);
+logoData();
+load(false);
+document.addEventListener("visibilitychange", () => { if(!document.hidden && state.model && Date.now() - lastLoad > 5*60*1000) load(false); });
 </script>
 </body>
 </html>
