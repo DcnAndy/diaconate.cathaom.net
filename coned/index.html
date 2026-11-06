@@ -1,0 +1,361 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Continuing Education for Permanent Deacons | Archdiocese of Mobile</title>
+<meta name="description" content="Continuing education contacts, opportunities, reporting and guidelines for permanent deacons of the Archdiocese of Mobile.">
+<link rel="icon" href="/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Libre+Franklin:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --navy:#0a5587; --navy-ink:#073c61; --gold:#c9a94e; --gold-soft:#f4ecd4;
+  --bg:#f5f7fa; --surface:#ffffff; --ink:#1c2430; --muted:#5d6878; --line:#dde3ea; --wash:#eef3f8;
+  --theo:#0a5587; --theo-bg:#e3eef7; --spir:#7a5a12; --spir-bg:#f6ecd2; --past:#2f6b4a; --past-bg:#e2f0e7;
+  --display:"Cormorant Garamond", "EB Garamond", Garamond, Georgia, serif;
+  --body:"Libre Franklin", "Segoe UI", Helvetica, Arial, sans-serif;
+  --band:#ffffff;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --navy:#6fa8d6; --navy-ink:#a9cbe8; --gold:#d8bd6a; --gold-soft:#3a3322;
+  --bg:#0f151d; --surface:#17202b; --ink:#e7ecf2; --muted:#9aa7b7; --line:#2a3644; --wash:#1c2836;
+  --theo:#a9cbe8; --theo-bg:#1b2c3d; --spir:#e6c978; --spir-bg:#3a3120; --past:#8fd1aa; --past-bg:#183326;
+  --band:#f7f8fa; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --navy:#6fa8d6; --navy-ink:#a9cbe8; --gold:#d8bd6a; --gold-soft:#3a3322;
+  --bg:#0f151d; --surface:#17202b; --ink:#e7ecf2; --muted:#9aa7b7; --line:#2a3644; --wash:#1c2836;
+  --theo:#a9cbe8; --theo-bg:#1b2c3d; --spir:#e6c978; --spir-bg:#3a3120; --past:#8fd1aa; --past-bg:#183326;
+  --band:#f7f8fa; color-scheme:dark }
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--navy)}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+
+/* Letterhead */
+.letterhead{background:var(--band);border-bottom:3px solid var(--gold)}
+.letterhead .wrap{padding-block:26px;display:flex;justify-content:center}
+.letterhead img{width:100%;max-width:680px;height:auto;display:block}
+.crumbs{font-size:13px;color:var(--muted);padding-top:18px}
+.crumbs a{text-decoration:none;font-weight:600}
+.crumbs a:hover{text-decoration:underline}
+
+main.wrap{padding-block:12px 64px}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(2rem,5vw,2.85rem);line-height:1.1;color:var(--navy-ink);text-align:center;margin:18px 0 10px;letter-spacing:.01em;text-wrap:balance}
+.rule{width:72px;height:2px;background:var(--gold);margin:0 auto 34px}
+h2{font-family:var(--display);font-weight:600;font-size:clamp(1.55rem,3.6vw,1.95rem);color:var(--navy-ink);margin:0 0 6px;line-height:1.2}
+.h2-note{color:var(--muted);margin:0 0 18px;font-size:14px}
+section{margin-top:52px}
+section:first-of-type{margin-top:0}
+
+/* Contacts */
+.contacts{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.contact{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 24px;align-items:center;padding:16px 22px;border-top:1px solid var(--line)}
+.contact:first-child{border-top:0}
+.contact .name{font-weight:600;font-size:16px}
+.contact .role{color:var(--muted);font-size:14px}
+.contact .reach{display:flex;flex-wrap:wrap;gap:6px 16px;justify-content:flex-end;align-items:center;font-size:14px}
+.contact .reach a{font-weight:500;text-decoration:none;overflow-wrap:anywhere}
+.contact .reach a:hover{text-decoration:underline}
+.contact .reach .tech{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border:1px solid var(--line);border-radius:999px;background:var(--wash);font-weight:600;font-size:13px}
+.contact .reach .tech:hover{border-color:var(--navy);text-decoration:none}
+@media (max-width:640px){
+  .contact{grid-template-columns:1fr}
+  .contact .reach{justify-content:flex-start}
+}
+
+/* Action buttons */
+.actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:22px}
+.btn{display:flex;align-items:center;gap:14px;padding:18px 22px;border-radius:8px;text-decoration:none;font-weight:600;font-size:17px;border:2px solid var(--navy);transition:transform .15s ease, box-shadow .15s ease, background .15s ease}
+.btn small{display:block;font-weight:400;font-size:13px;opacity:.85;margin-top:2px}
+.btn svg{flex:none;width:28px;height:28px}
+.btn.primary{background:#0a5587;border-color:#0a5587;color:#fff}
+.btn.secondary{background:var(--surface);color:var(--navy-ink)}
+.btn:hover,.btn:focus-visible{transform:translateY(-2px);box-shadow:0 8px 22px rgba(10,85,135,.16);outline:none}
+.btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.btn.secondary:hover{background:var(--wash)}
+
+/* Opportunities */
+.opps{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+thead th{background:var(--wash);text-align:left;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:12px 18px;border-bottom:1px solid var(--line)}
+tbody td{padding:16px 18px;border-top:1px solid var(--line);vertical-align:top}
+tbody tr:first-child td{border-top:0}
+td.title{font-weight:600;min-width:200px}
+td.title .desc{display:block;font-weight:400;color:var(--muted);font-size:14px;margin-top:4px}
+td.dates{min-width:150px;font-size:14px}
+td.hours{text-align:right;font-variant-numeric:tabular-nums;font-weight:600;white-space:nowrap}
+th.hours{text-align:right}
+.chip{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap;background:var(--wash);color:var(--ink)}
+.chip.theological{background:var(--theo-bg);color:var(--theo)}
+.chip.spiritual{background:var(--spir-bg);color:var(--spir)}
+.chip.pastoral{background:var(--past-bg);color:var(--past)}
+.tbd{color:var(--muted);font-style:italic}
+.opps-foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px;padding:10px 18px;border-top:1px solid var(--line);font-size:12px;color:var(--muted);background:var(--wash)}
+.empty{padding:28px 18px;text-align:center;color:var(--muted)}
+@media (max-width:700px){
+  thead{display:none}
+  table,tbody,tr,td{display:block;width:100%}
+  tbody tr{padding:14px 16px;border-top:1px solid var(--line)}
+  tbody tr:first-child{border-top:0}
+  tbody td{border:0;padding:0;min-width:0}
+  td.title{margin-bottom:8px}
+  td.dates,td.cat,td.hours{display:inline-block;width:auto;margin-right:12px;font-size:13px;text-align:left}
+  td.dates::before{content:"Dates: ";color:var(--muted);font-weight:400}
+  td.hours::before{content:"Hours: ";color:var(--muted);font-weight:400}
+}
+
+/* Guidelines */
+.doc{background:var(--surface);border:1px solid var(--line);border-top:4px solid #0a5587;border-radius:8px;padding:clamp(22px,4vw,44px)}
+.doc .doc-head{text-align:center;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--line)}
+.doc .doc-head div{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.doc .doc-head strong{display:block;font-family:var(--display);font-size:1.45rem;font-weight:600;color:var(--navy-ink);margin-top:6px;letter-spacing:.01em}
+.doc h3{font-family:var(--display);font-weight:600;font-size:1.4rem;color:var(--navy-ink);margin:32px 0 10px;display:flex;gap:12px;align-items:baseline}
+.doc h3:first-of-type{margin-top:0}
+.doc h4{font-weight:600;font-size:1rem;color:var(--navy-ink);margin:26px 0 8px;display:flex;gap:10px;align-items:baseline}
+.doc h5{font-weight:600;font-size:.95rem;margin:20px 0 6px;color:var(--ink)}
+.doc .num{font-family:var(--body);font-size:.8rem;font-weight:700;color:#fff;background:#0a5587;border-radius:4px;padding:1px 7px;letter-spacing:.02em;position:relative;top:-2px}
+.doc h4 .num{background:var(--gold);color:#3a2e10}
+.doc p{margin:0 0 12px;max-width:72ch}
+.doc ul{margin:0 0 14px;padding-left:22px;max-width:72ch}
+.doc li{margin:0 0 8px}
+.doc li ul{margin-top:6px}
+.doc .norms{background:var(--wash);border-left:3px solid var(--gold);border-radius:0 6px 6px 0;padding:14px 18px 6px;margin:14px 0 18px}
+.doc .norms h5{margin-top:0}
+.doc .cite{color:var(--muted);font-size:.85em;white-space:nowrap}
+.doc .reqs{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin:16px 0 20px}
+.doc .req{border:1px solid var(--line);border-radius:6px;padding:14px 16px;background:var(--surface)}
+.doc .req b{display:block;font-size:2rem;font-family:var(--display);line-height:1;color:var(--navy-ink)}
+.doc .req span{font-size:13px;color:var(--muted)}
+.doc .dim{border:1px solid var(--line);border-radius:6px;padding:14px 18px 4px;margin:12px 0}
+.doc .dim h5{margin-top:0;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.doc sup a{text-decoration:none;font-weight:600}
+.doc .notes{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.doc .notes ol{padding-left:20px;margin:6px 0 0}
+.doc .notes li{margin-bottom:6px}
+
+footer{text-align:center;padding:20px 16px 28px;font-size:13px;color:var(--muted);border-top:1px solid var(--line)}
+footer a{color:var(--navy);text-decoration:none}
+
+@media print{
+  .actions,.crumbs,footer .help{display:none}
+  body{background:#fff}
+  .doc,.opps,.contacts{border-color:#ccc}
+}
+</style>
+</head>
+<body>
+
+<header class="letterhead">
+  <div class="wrap">
+    <img src="/logo.png" alt="Archdiocese of Mobile, Office of the Permanent Diaconate">
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="/">&larr; Permanent Diaconate Resource Page</a></nav>
+
+  <h1>Continuing Education for Permanent Deacons</h1>
+  <div class="rule"></div>
+
+  <!-- Contacts -->
+  <section aria-labelledby="contacts-h">
+    <h2 id="contacts-h" class="visually-hidden" hidden>Contacts</h2>
+    <div class="contacts">
+      <div class="contact">
+        <div><div class="name">Dcn. Ronnie Hathorne</div><div class="role">Director of the Permanent Diaconate</div></div>
+        <div class="reach"><a href="mailto:rhathorne@mobarch.org">rhathorne@mobarch.org</a></div>
+      </div>
+      <div class="contact">
+        <div><div class="name">Dcn. Charles Eick</div><div class="role">Administrator for Continuing Education</div></div>
+        <div class="reach"><a href="mailto:ceick@mobarch.org">ceick@mobarch.org</a></div>
+      </div>
+      <div class="contact">
+        <div><div class="name">Dcn. Andy Pitts</div><div class="role">Director of Information Systems &amp; Technology</div></div>
+        <div class="reach">
+          <a href="mailto:apitts@mobarch.org">apitts@mobarch.org</a>
+          <a class="tech" href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=oRd9zj1GiUWVp5rZiYSYR6IwQDuRCnVLpBy0ohJUADNURVNSVUg4T1pDRVQ4QVFTVUc5OTA4SU5aOS4u" target="_blank" rel="noopener">Submit a Request for Tech Support &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <a class="btn primary" href="https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=oRd9zj1GiUWVp5rZiYSYR6-52aPwaQFPqjaxibtLJodUNUk2NjZaWVZIRkJCWEhXQU1HQlRVN1U1VC4u" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M12 18v-6M9 15h6"/></svg>
+        <span>Report your Continuing Education<small>Log hours on the Microsoft Form</small></span>
+      </a>
+      <a class="btn secondary" href="/tracker">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>
+        <span>Track your Continuing Education<small>See your hours toward the 3-year cycle</small></span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Opportunities -->
+  <section aria-labelledby="opps-h">
+    <h2 id="opps-h">Continuing Education Opportunities</h2>
+    <p class="h2-note">Other programs may count toward your hours with approval from the Office of the Permanent Diaconate.</p>
+    <div class="opps">
+      <table>
+        <thead><tr><th scope="col">Opportunity</th><th scope="col">Dates Offered</th><th scope="col">Category</th><th scope="col" class="hours">Credit Hours</th></tr></thead>
+        <tbody id="oppsBody"></tbody>
+      </table>
+      <div class="opps-foot"><span id="oppsStatus">Loading the current list…</span><span>Questions? <a href="mailto:ceick@mobarch.org">Contact Dcn. Charles Eick</a></span></div>
+    </div>
+  </section>
+
+  <!-- Guidelines -->
+  <section aria-labelledby="guide-h">
+    <h2 id="guide-h">Guidelines for Continuing Education of Permanent Deacons</h2>
+    <p class="h2-note">Archdiocese of Mobile &middot; Office of the Permanent Diaconate</p>
+
+    <article class="doc">
+      <div class="doc-head">
+        <div>Archdiocese of Mobile &middot; Office of Permanent Diaconate</div>
+        <strong>Continuing Education Guidelines for Permanent Deacons</strong>
+      </div>
+
+      <h3><span class="num">1.0</span>General</h3>
+      <p>The <em>National Directory for the Formation, Ministry, and Life of Permanent Deacons in the United States of America</em> (USCCB, 2021) mandates ongoing continuing education and formation for deacons. See Norms below. A requirement for such education and formation is to be established by each diocese with the approval of the bishop.</p>
+
+      <div class="norms">
+        <h5>National Norms</h5>
+        <ul>
+          <li>A program is to be planned for the first five years of their ministry and coordinated by the Director of the Permanent Diaconate. Deacons in their initial pastoral assignments should be carefully supervised by an exemplary designated pastor or priest supervisor especially appointed to this task by the diocesan bishop. <span class="cite">(263)</span></li>
+          <li>Each diocesan Church is to establish a basic minimum of continuing education hours to be fulfilled on an annual basis by all diocesan deacons in active service. This would be in addition to time allocated for the annual diaconal community retreat. <span class="cite">(267)</span></li>
+          <li>The goal of post-ordination formation is to responsibly address the various aspects of a deacon’s ministry, the development of his personality and, above all, his commitment to spiritual growth. Ongoing formation must include and harmonize all dimensions of the life and ministry of the deacon [human, spiritual, intellectual, and pastoral]. <span class="cite">(251)</span></li>
+        </ul>
+      </div>
+
+      <h3><span class="num">2.0</span>Participation in Continuing Education and Formation</h3>
+      <p>The Archdiocese of Mobile has established the following continuing education and formation guidelines for all deacons in active service.<sup><a href="#fn1" id="r1">1</a></sup> Specific guidelines pertain to newly ordained deacons for their first five years of ministry (2.1) and to experienced deacons who have served six or more years in ministry (2.2).</p>
+
+      <h4><span class="num">2.1</span>Requirement for Newly Ordained</h4>
+      <p>For their first five years after ordination, deacons will perform their ministry under the supervision of the Pastor of their assigned parish and the Director of Permanent Deacons. Newly ordained deacons enter a period of directed post-ordination formation designed to support novice deacons during the early years of ministry, particularly in the human dimension. The focus of this formation is on building proficiency in understanding and skills as a deacon in the ministries of the word, liturgy, and charity. Navigating and strengthening family life and prayer as a new deacon is also a priority. An emphasis also exists on building cultural competency in ministering to a diverse parish.</p>
+      <p>Annual formation guidelines and accountability for deacons serving in their first five years after ordination are as follows:</p>
+      <ul>
+        <li>Complete the initial Ministerial Agreement with the Pastor of their assigned parish at the onset of diaconal ministry that outlines the deacon’s ministerial obligations.
+          <ul>
+            <li>A signed copy of this form is kept by the pastor and the deacon.</li>
+            <li>The initial Ministerial Agreement Form must be revised by the end of year 3, or whenever a new pastor is assigned.</li>
+          </ul>
+        </li>
+        <li>Pastors will complete a Deacon Annual Assessment that evaluates progress on ministerial obligations at the end of the deacon’s first year in service (and years 2–5) to review with the deacon.
+          <ul><li>A signed copy of this form is kept by the pastor and the deacon.</li></ul>
+        </li>
+        <li>Meet quarterly with their appointed deacon mentor couple (husband and wife) online or in person to discuss needed advice, wisdom, and support.</li>
+        <li>Meet quarterly online with the Continuing Education Administrator to discuss pertinent topics to support early ministry.</li>
+        <li>Document 24 hours over 3 years for continuing education and formation experiences that pertain directly to early ministry (e.g., Spanish learning, workshop, seminar, program, etc.).
+          <ul><li>See <a href="#s22">(2.2) Requirement for Experienced Deacons</a>.</li></ul>
+        </li>
+        <li>Meet with the Director of the Permanent Diaconate (online) at the end of the first year of post-ordination assignment (and years 2–3) to review the Annual Ministry Report, completed and submitted in advance.</li>
+      </ul>
+      <p>Newly ordained deacons are required to attend the Annual Retreat for Deacons <strong>after</strong> the first full year of ordination. The retreat is optional during the first year of ordination.</p>
+
+      <h4 id="s22"><span class="num">2.2</span>Requirement for Experienced Deacons</h4>
+      <p>Deacons who have served in active service for six or more years require further education and growth in their ministry, particularly in the theological, spiritual, and pastoral dimensions. With experience in service, deacons need to learn more about the Church, scripture, theology, liturgy, and the Saints for teaching others. Experienced deacons are also ready to provide greater pastoral support in ministry with individuals and groups of parishioners.</p>
+      <p>Deacons are required to obtain twenty-four (24) hours of continuing education over a three-year period, with a minimum of six (6) hours within a single year. The three-year cycle begins on January 1 following the fifth year after ordination, or arrival into the Archdiocese of Mobile and the granting of faculties by the Archbishop.</p>
+
+      <div class="reqs" role="list">
+        <div class="req" role="listitem"><b>24</b><span>hours over each three-year cycle</span></div>
+        <div class="req" role="listitem"><b>6</b><span>hours minimum in any single year</span></div>
+        <div class="req" role="listitem"><b>12 · 6 · 6</b><span>Theological · Spiritual · Pastoral minimums</span></div>
+      </div>
+
+      <p>A minimum number of hours is required across each of the three dimensions over the three-year period: Theological, Spiritual, and Pastoral. If funds are needed for any continuing education hours, deacons should seek assistance from their parish. The Office of the Permanent Diaconate is not responsible for the reimbursement of funds.</p>
+      <p>Formation guidelines over a three-year period for deacons serving six or more years in active service are as follows:</p>
+
+      <div class="dim">
+        <h5><span>Theological Study</span><span class="chip theological">12 hours minimum</span></h5>
+        <ul>
+          <li>This dimension includes courses from a Catholic college or institute, workshops, seminars, or conferences approved in advance by the Office of the Permanent Diaconate.</li>
+          <li>Those workshops, seminars, and conferences offered by the Archdiocese of Mobile or other dioceses qualify for approved continuing education hours.</li>
+          <li>Studies may occur online or in-person.</li>
+        </ul>
+      </div>
+      <div class="dim">
+        <h5><span>Spiritual Formation</span><span class="chip spiritual">6 hours minimum</span></h5>
+        <ul><li>This dimension includes days of reflection/prayer, spiritual direction, and other additional retreats.</li></ul>
+      </div>
+      <div class="dim">
+        <h5><span>Pastoral Practice</span><span class="chip pastoral">6 hours minimum</span></h5>
+        <ul><li>This dimension includes practica/certifications, personal study of books, major articles, or other material (audio/visual) that are related to one’s ministry of charity (outreach), word (evangelization/teaching), and liturgy (public prayer/devotion).</li></ul>
+      </div>
+
+      <p>Deacons are expected to attend the Annual Retreat for Permanent Deacons, which typically takes place in the fall. A minimum of one retreat each calendar year is required by Canon Law.<sup><a href="#fn2" id="r2">2</a></sup> The annual retreat hours are <strong>not</strong> to be included towards the continuing education hours.</p>
+
+      <h5>2.2.1 Accountability System</h5>
+      <p>Documentation of hours will be posted on an annual basis by <strong>November 1st</strong> to a confidential web-based site for review by the Director and/or Administrator. Deacons will be notified by <strong>December 31st</strong> of each calendar year of any deficiency needed to complete the requirements.</p>
+      <p>The Continuing Education Administrator will prepare an annual report showing each deacon’s hours of continuing education. The report will be forwarded to the Director of the Permanent Diaconate, who will notify all deacons and their pastors by letter who have not fulfilled the annual and three-year hourly requirements.</p>
+      <p>The Archbishop will be notified by the Director of any deacons who do not meet these requirements and do not have an immediate plan to further meet these requirements. The Archbishop at his discretion may determine if a deacon’s faculties and/or assignment should be suspended, pending completion of the requirements.</p>
+
+      <div class="notes">
+        <ol>
+          <li id="fn1">Retired deacons, deacons on pastoral leave, and deacons on leave of absence may be relieved of these requirements. <a href="#r1" aria-label="Back to text">&#8617;</a></li>
+          <li id="fn2">The cost of the annual retreat is to be paid by the deacon’s assigned parish. Deacons who cannot attend the sponsored annual retreat must plan a comparable retreat during the calendar year that is approved by the Director. The parish is not obligated to provide more than the cost of the Archdiocesan sponsored retreat. <a href="#r2" aria-label="Back to text">&#8617;</a></li>
+        </ol>
+      </div>
+    </article>
+  </section>
+</main>
+
+<footer>
+  <div>&copy; <span id="yr">2026</span> Archdiocese of Mobile &middot; Office of the Permanent Diaconate</div>
+</footer>
+
+<script>
+document.getElementById('yr').textContent = new Date().getFullYear();
+
+// Snapshot of the opportunities workbook (Nov 6, 2026). Shown only if the live read fails.
+const SNAPSHOT = [
+  ["Title","Description","Dates Offered","Category","Credit Hours"],
+  ["Predicación por Diáconos Hispanohablantes/Preaching for Deacons (Spanish)","Un curso de homilética en español, dividido en seis partes, ofrecido por el diácono Juan Carlos Urquijo, del SEPI.","1 Martes de Mes, Nov 2026-Abril 2027","Theological","6"],
+  ["Wedding Preparation/Examination Training","A course in the new models for wedding preparation, presented by the Office of Evangelization.","TBD","Pastoral","1-3"],
+  ["Retreats","May be submitted to the Administrator for approval.","TBD","Spiritual","6"]
+];
+
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function render(values, live){
+  const body = document.getElementById("oppsBody");
+  const status = document.getElementById("oppsStatus");
+  const head = (values[0] || []).map(h => String(h).trim().toLowerCase());
+  const col = (name, fallback) => { const i = head.findIndex(h => h.startsWith(name)); return i >= 0 ? i : fallback; };
+  const iT = col("title",0), iD = col("desc",1), iDt = col("date",2), iC = col("cat",3), iH = col("credit",4);
+  const rows = values.slice(1).filter(r => String(r[iT] ?? "").trim());
+  if (!rows.length){
+    body.innerHTML = '<tr><td colspan="4" class="empty">No opportunities are listed right now. Check back soon.</td></tr>';
+  } else {
+    body.innerHTML = rows.map(r => {
+      const cat = String(r[iC] ?? "").trim();
+      const dates = String(r[iDt] ?? "").trim();
+      const hrs = String(r[iH] ?? "").trim();
+      return `<tr>
+        <td class="title">${esc(r[iT])}${String(r[iD] ?? "").trim() ? `<span class="desc">${esc(r[iD])}</span>` : ""}</td>
+        <td class="dates">${!dates || /^tbd$/i.test(dates) ? '<span class="tbd">To be announced</span>' : esc(dates)}</td>
+        <td class="cat">${cat ? `<span class="chip ${esc(cat.toLowerCase())}">${esc(cat)}</span>` : ""}</td>
+        <td class="hours">${esc(hrs) || "—"}</td>
+      </tr>`;
+    }).join("");
+  }
+  status.textContent = live
+    ? `${rows.length} ${rows.length === 1 ? "opportunity" : "opportunities"} listed`
+    : `Showing the list as of Nov 6, 2026`;
+}
+
+(async () => {
+  try {
+    const r = await fetch("/api/ce-opportunities");
+    const j = await r.json();
+    if (!r.ok || !Array.isArray(j.values)) throw new Error(j.error || "read failed");
+    render(j.values, true);
+  } catch (e) {
+    render(SNAPSHOT, false);
+  }
+})();
+</script>
+</body>
+</html>
