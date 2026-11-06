@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/logo.png">
+<title>Deacon CE Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Libre+Franklin:wght@400;500;600;700&display=swap">
+<script src="/tracker/msal-browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+/* Layout: white letterhead band with the office logo, gold rule, then a summary band and a roster ledger; each deacon opens as his own report view (#d-lastname-firstname). */
+:root{
+  --navy:#0a5587; --navy-ink:#073c61; --gold:#c9a94e; --gold-soft:#efe4c3;
+  --bg:#f5f7fa; --surface:#ffffff; --ink:#1c2430; --muted:#5d6878; --line:#dde3ea; --wash:#eef3f8;
+  --ok:#2f7d4f; --warn:#c98a0f; --bad:#b23a3a;
+  --ok-bg:#e5f2ea; --warn-bg:#fbf0d9; --bad-bg:#f8e3e3;
+  --display:"Cormorant Garamond", "EB Garamond", Garamond, Georgia, serif;
+  --body:"Libre Franklin", "Segoe UI", Helvetica, Arial, sans-serif;
+  --band:#ffffff;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --navy:#6fa8d6; --navy-ink:#a9cbe8; --gold:#d8bd6a; --gold-soft:#3a3322;
+  --bg:#0f151d; --surface:#17202b; --ink:#e7ecf2; --muted:#9aa7b7; --line:#2a3644; --wash:#1c2836;
+  --ok:#5cbf83; --warn:#e2ad3c; --bad:#e07272; --ok-bg:#183326; --warn-bg:#3a2f15; --bad-bg:#3a1d1d;
+  --band:#f7f8fa; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --navy:#6fa8d6; --navy-ink:#a9cbe8; --gold:#d8bd6a; --gold-soft:#3a3322;
+  --bg:#0f151d; --surface:#17202b; --ink:#e7ecf2; --muted:#9aa7b7; --line:#2a3644; --wash:#1c2836;
+  --ok:#5cbf83; --warn:#e2ad3c; --bad:#e07272; --ok-bg:#183326; --warn-bg:#3a2f15; --bad-bg:#3a1d1d;
+  --band:#f7f8fa; color-scheme:dark }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.letterhead{background:var(--band);border-bottom:3px solid var(--gold)}
+.letterhead .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 24px;padding-block:18px}
+.letterhead img{height:64px;width:auto;max-width:100%}
+.lh-meta{display:flex;flex-direction:column;align-items:flex-end;gap:2px;color:#4a5563;font-size:12px}
+.lh-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:flex-end}
+.letterhead button.refresh{background:#0a5587;border-color:#0a5587;color:#fff;padding:6px 12px}
+.letterhead button.refresh:disabled{opacity:.6;cursor:progress}
+.who{font-size:12px;color:#4a5563}
+.who button{all:unset;cursor:pointer;color:#0a5587;font-weight:600;margin-left:6px}
+.who button:focus-visible{outline:2px solid #c9a94e}
+.gate{max-width:560px;margin:24px auto;text-align:center;display:flex;flex-direction:column;gap:12px;align-items:center;padding:32px}
+.gate p{margin:0;color:var(--muted);max-width:52ch}
+.lh-meta strong{font-family:var(--display);font-size:22px;color:#0a5587;font-weight:600;letter-spacing:.01em}
+.tabbar{background:var(--surface);border-bottom:1px solid var(--line)}
+.tabbar .wrap{display:flex;gap:4px}
+.tabbar a{padding:12px 18px 10px;font-weight:600;font-size:14px;color:var(--muted);text-decoration:none;border-bottom:3px solid transparent;margin-bottom:-1px}
+.tabbar a:hover{color:var(--navy-ink)}
+.tabbar a[aria-selected="true"]{color:var(--navy-ink);border-bottom-color:var(--gold)}
+.picker{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.picker select{min-width:0;max-width:100%;width:260px;font-weight:600}
+main.wrap{padding-block:24px 48px;display:flex;flex-direction:column;gap:24px}
+h1,h2,h3{font-family:var(--display);font-weight:600;color:var(--navy-ink);margin:0;text-wrap:balance}
+h1{font-size:34px;line-height:1.1}
+h2{font-size:24px}
+h3{font-size:19px}
+.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.num{font-variant-numeric:tabular-nums}
+.titlebar{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:flex-end;justify-content:space-between}
+.titlebar p{margin:4px 0 0;color:var(--muted);max-width:68ch}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+select,input[type=search]{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 10px}
+input[type=search]{min-width:0;width:220px}
+button{font:inherit;cursor:pointer;border-radius:6px;padding:8px 14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-weight:600;font-size:13px}
+button:hover{border-color:var(--navy)}
+button.primary{background:var(--navy);border-color:var(--navy);color:#fff}
+:root[data-theme="dark"] button.primary{color:#0f151d}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) button.primary{color:#0f151d}}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,select:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:16px 20px;align-content:start}
+.kpi .big{font-family:var(--display);font-size:46px;line-height:1;color:var(--navy-ink);font-weight:600}
+.kpi .sub{color:var(--muted);font-size:12px}
+.kpi.wide{grid-column:1/-1;border-top:1px solid var(--line);padding-top:14px}
+.lights{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:600;border:1px solid transparent;background:var(--wash);color:var(--ink)}
+button.chip{padding:4px 10px}
+button.chip[aria-pressed="true"]{border-color:var(--navy)}
+.dot{width:12px;height:12px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.dot.green{background:var(--ok)} .dot.yellow{background:var(--warn)} .dot.red{background:var(--bad)}
+.bars{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.bar-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:baseline}
+.bar-row .lab{font-weight:600;font-size:13px;min-width:0}
+.bar-row .val{font-size:13px;color:var(--muted)}
+.track{grid-column:1/-1;height:8px;background:var(--wash);border-radius:4px;overflow:hidden}
+.fill{height:100%;background:var(--navy);border-radius:4px}
+.fill.gold{background:var(--gold)}
+.fill.ok{background:var(--ok)}
+.legend{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:4px;margin-top:12px}
+.legend span{display:flex;gap:8px;align-items:center}
+.roster-head{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;margin-bottom:12px}
+.table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;background:var(--wash);white-space:nowrap;position:sticky;top:0}
+th button.sort{all:unset;cursor:pointer}
+th button.sort:focus-visible{outline:2px solid var(--gold)}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+tbody tr:hover{background:var(--wash)}
+tbody tr:last-child td{border-bottom:0}
+a.name{color:var(--navy-ink);font-weight:600;text-decoration:none}
+a.name:hover{text-decoration:underline}
+.mini{display:inline-block;width:70px;height:6px;background:var(--wash);border-radius:3px;vertical-align:middle;margin-left:8px;overflow:hidden}
+.mini i{display:block;height:100%;background:var(--gold)}
+.muted{color:var(--muted)}
+.notice{border-left:4px solid var(--warn);background:var(--warn-bg);padding:10px 14px;border-radius:6px;font-size:13px}
+.zero{color:var(--muted)}
+/* detail */
+.back{color:var(--navy-ink);text-decoration:none;font-weight:600;font-size:13px}
+.detail-head{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between}
+.status-pill{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;font-weight:600;font-size:13px}
+.status-pill.green{background:var(--ok-bg);color:var(--ok)} .status-pill.yellow{background:var(--warn-bg);color:var(--warn)} .status-pill.red{background:var(--bad-bg);color:var(--bad)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+.reqnote{font-size:12px;color:var(--muted);margin-top:10px}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom, 0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;z-index:20}
+footer.wrap{padding-block:0 32px;color:var(--muted);font-size:12px}
+@media (max-width:560px){ h1{font-size:28px} .kpi .big{font-size:38px} input[type=search]{width:100%} .controls{width:100%} .letterhead img{height:46px} .lh-meta{align-items:flex-start} }
+@media (prefers-reduced-motion: no-preference){ .fill,.mini i{transition:width .4s ease} }
+</style>
+</head>
+<body>
+
+<header class="letterhead">
+  <div class="wrap">
+    <img src="/logo.png" alt="Archdiocese of Mobile, Office of the Permanent Diaconate">
+    <div class="lh-meta">
+      <strong>Continuing Education Tracker</strong>
+      <div class="lh-actions">
+        <span id="asof">Loading responses…</span>
+        <button id="refreshBtn" class="refresh" type="button" title="Reload the latest form responses">↻ Refresh</button>
+      </div>
+      <span class="who" id="who" hidden></span>
+    </div>
+  </div>
+</header>
+
+<nav class="tabbar" aria-label="Tracker views">
+  <div class="wrap" role="tablist">
+    <a role="tab" id="tab-overview" href="#overview">Overview</a>
+    <a role="tab" id="tab-individual" href="#individual">Individual</a>
+  </div>
+</nav>
+<main class="wrap" id="app"></main>
+<footer class="wrap">Requirement: 24 hours every three years (Spiritual 6, Pastoral 6, Theological 12), with at least 6 hours each year. Tracking begins with 2026.</footer>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+let LOGO = null;
+const LOGO_RATIO = 0.1843;
+const SNAPSHOT = null;   // null on the live site; the preview build embeds a saved copy
+/* Live data: the Microsoft Forms response workbook in OneDrive, read with the viewer's own Microsoft 365 sign-in.
+   clientId = the Entra app registration (Single-page application, redirect URI https://diaconate.cathaom.net/tracker). */
+const CONFIG = {
+  clientId: "",
+  authority: "https://login.microsoftonline.com/mobarch.org",
+  driveId: "b!TWJqZUxeXEGgAtfDZgRj9wjA7sQ4I_FEn1i3VGNXz0wVNsPgMSJRQrWjenmaZb5Z",
+  itemId: "01XQCU5RIPL46QBT7QVVDKBKDVYNG4532X",  // Deacon Continuing Education Log.xlsx
+  scopes: ["Files.Read.All"]
+};
+/* Zero-based columns of the response sheet: C = completion time, F onward = the form's questions. */
+const COLS = {submitted:2, name:5, category:6, event:7, start:8, end:9, description:10, type:11, hours:12, notes:13};
+const LIVE = !SNAPSHOT;
+const ROSTER = ["Archer, John","Arias, Ramiro","Bailey, Robert","Boken, Scott","Bosarge, Vincent","Boyd, Jay","Brewer, Jim","Brickman, Eric","Bryant, James","Bullock, James","Castanza, Michael","Christian, Wiley","Connick, Ed","Connick, Joseph","Conrad, Jerry","Crider, Curt","Crimmins, Walt","Darrington, Clarence","Diaz-Rivera, Alfonso","Donastorg, Hector","Drake, Chuck","Eick, Charles","Fairley, Glenn","Gale, Norman","Geri, Gene","Gordillo, Jorge","Gottstine, Joseph","Graham, Billy","Groves, Charles","Gueret, Raymond","Harkins, Bill","Hathorne, Ronnie","Haughery, John","Jakubowski, Matt","Johnson, Ernie","Kaiser, Kenny","Kingsmore, Steve","Kirsch, Mike","Klusek, Todd","Labadie, James","Leibold, David","Leiker, Gregory","Lesh, Jeffrey","Lukas, Karl","Martin, Ronald","Martin, Todd","Maxwell, Stanley","McMeans, Deo","Moore, Philip","Mueller, Joe","Nelson, Steve","Newell, David","Ortega, Cesar","Pattberg, Joseph","Pitts, Andy","Pope, Mat","Ralph, George","Ray, David","Robbins, Arthur","Rodgers, Danny","Roldan, Gustavo","Roy, Joseph","Scarboro, William","Schmidt, Ted Sr.","Scott, James","Seymour, Steve","Sinchak, Doug","Sykes, Steven","Thompson, Mark","Tidwell, Stephen","Tran, Francis","Vasquez, Guadalupe","Vrazel, Gary","Ward, Aldon","Weatherford, Stephen","Weller, Chris","Williams, John","Yeend, George","Zellner, Malcolm","Zieman, Francis"];
+
+const START_YEAR = 2026;
+const CATS = ["Spiritual","Pastoral","Theological"];
+const CYCLE_REQ = {Spiritual:6, Pastoral:6, Theological:12, total:24};
+const YEAR_MIN = 6;
+const TYPES = ["Retreat/Day of Reflection","Conference","Book","Articles/Movies/Media","Course/Seminar/Workshop/Certification","Spiritual Direction"];
+const STATUS_LABEL = {green:"On track", yellow:"Needs attention", red:"No hours"};
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const norm = s => String(s||"").toLowerCase().replace(/[^a-z0-9,]+/g," ").replace(/\s*,\s*/g,",").trim();
+const slug = s => "d-" + String(s).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+const fmt = n => (Math.round(n*10)/10).toLocaleString(undefined,{minimumFractionDigits: n%1 ? 1 : 0, maximumFractionDigits:1});
+const pct = (v,m) => Math.max(0, Math.min(100, m ? v/m*100 : 0));
+function parseDate(v){
+  if(!v) return null;
+  if(typeof v === "number"){ const u = new Date(Math.round((v-25569)*864e5)); return new Date(u.getUTCFullYear(), u.getUTCMonth(), u.getUTCDate(), u.getUTCHours(), u.getUTCMinutes()); } // Excel serial, read as local time
+  const m = String(v).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if(m) return new Date(+m[3], +m[1]-1, +m[2]);
+  const d = new Date(v); return isNaN(d) ? null : d;
+}
+const fmtDate = d => d ? d.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}) : "";
+function canonCat(c){ const n = String(c||"").trim().toLowerCase(); return CATS.find(x => n.startsWith(x.toLowerCase())) || "Other"; }
+function canonType(t){ const n = String(t||"").trim().toLowerCase(); return TYPES.find(x => x.toLowerCase() === n) || (String(t||"").trim() || "Other"); }
+
+/* ---------- state ---------- */
+const state = { year: new Date().getFullYear(), q:"", status:"all", sort:"name", dir:1, selected:new Set(), data:null, asOf:null };
+if(state.year < START_YEAR) state.year = START_YEAR;
+
+function buildModel(raw){
+  const byName = new Map(ROSTER.map(n => [norm(n), {name:n, entries:[]}]));
+  const unmatched = [];
+  for(const r of raw.entries){
+    const start = parseDate(r.start) || parseDate(r.submitted);
+    const e = { name:String(r.name||"").trim(), category:canonCat(r.category), event:r.event||"", start, end:parseDate(r.end), description:r.description||"", type:canonType(r.type), hours:parseFloat(r.hours)||0, notes:r.notes||"", year:start ? start.getFullYear() : null };
+    const d = byName.get(norm(e.name));
+    if(d) d.entries.push(e); else unmatched.push(e);
+  }
+  for(const d of byName.values()) d.entries.sort((a,b)=>(b.start||0)-(a.start||0));
+  return { deacons:[...byName.values()], unmatched };
+}
+
+function yearStats(d, y){
+  const s = {total:0, Spiritual:0, Pastoral:0, Theological:0, Other:0, count:0};
+  for(const e of d.entries) if(e.year === y){ s.total += e.hours; s[e.category] += e.hours; s.count++; }
+  return s;
+}
+function windowStats(d, y){
+  const years = [y-2, y-1, y].map(yy => ({year:yy, before: yy < START_YEAR, ...yearStats(d, yy)}));
+  const sum = {total:0, Spiritual:0, Pastoral:0, Theological:0};
+  for(const r of years) for(const k in sum) sum[k] += r[k];
+  return {years, sum};
+}
+/* Light for the selected year:
+   red    = no hours reported
+   green  = at least 6 hours AND hours in all three categories
+   yellow = some hours, but under 6 or a category is missing */
+function lightFor(s){
+  if(s.total <= 0) return "red";
+  if(s.total >= YEAR_MIN && CATS.every(c => s[c] > 0)) return "green";
+  return "yellow";
+}
+function rows(){
+  return state.model.deacons.map(d => { const s = yearStats(d, state.year); const w = windowStats(d, state.year); return {d, s, w, light:lightFor(s)}; });
+}
+
+/* ---------- rendering ---------- */
+function yearOptions(){
+  const now = Math.max(new Date().getFullYear(), START_YEAR);
+  let o = ""; for(let y = now; y >= START_YEAR; y--) o += `<option value="${y}" ${y===state.year?"selected":""}>${y}</option>`;
+  return o;
+}
+
+function renderOverview(){
+  const R = rows();
+  const tot = {total:0, Spiritual:0, Pastoral:0, Theological:0};
+  const typeAgg = Object.fromEntries(TYPES.map(t => [t,{count:0,hours:0}]));
+  let entryCount = 0, allTime = 0;
+  for(const r of R){
+    for(const k in tot) tot[k] += r.s[k];
+    for(const e of r.d.entries){ allTime += e.hours; if(e.year === state.year){ entryCount++; (typeAgg[e.type] ||= {count:0,hours:0}); typeAgg[e.type].count++; typeAgg[e.type].hours += e.hours; } }
+  }
+  const reporting = R.filter(r => r.s.total > 0).length;
+  const counts = {green:0, yellow:0, red:0}; R.forEach(r => counts[r.light]++);
+  const maxCat = Math.max(1, ...CATS.map(c => tot[c]));
+  const maxType = Math.max(1, ...Object.values(typeAgg).map(t => t.count));
+
+  let list = R.filter(r => (state.status==="all" || r.light===state.status) && (!state.q || r.d.name.toLowerCase().includes(state.q.toLowerCase())));
+  const key = { name:r=>r.d.name, total:r=>r.s.total, Spiritual:r=>r.s.Spiritual, Pastoral:r=>r.s.Pastoral, Theological:r=>r.s.Theological, cycle:r=>r.w.sum.total, light:r=>({red:0,yellow:1,green:2})[r.light] }[state.sort];
+  list.sort((a,b)=>{ const x=key(a), y=key(b); return (x<y?-1:x>y?1:0)*state.dir || a.d.name.localeCompare(b.d.name); });
+  const allVisibleSel = list.length && list.every(r => state.selected.has(r.d.name));
+  const th = (k,label,cls="") => `<th class="${cls}" aria-sort="${state.sort===k?(state.dir>0?"ascending":"descending"):"none"}"><button class="sort" data-sort="${k}">${label}${state.sort===k?(state.dir>0?" ▲":" ▼"):""}</button></th>`;
+
+  $("#app").innerHTML = `
+  <section class="titlebar">
+    <div>
+      <div class="eyebrow">Overview · ${state.year}</div>
+      <h1>Deacon Continuing Education</h1>
+      <p>Hours reported through the Continuing Education form for all ${ROSTER.length} deacons. Select a name, or use the Individual tab, to see his full report.</p>
+    </div>
+    <div class="controls">
+      <label class="eyebrow" for="yearSel">Year</label>
+      <select id="yearSel">${yearOptions()}</select>
+      <button class="primary" id="pdfOverview">Export overview PDF</button>
+    </div>
+  </section>
+
+  ${state.model.unmatched.length ? `<div class="notice"><strong>${state.model.unmatched.length} response${state.model.unmatched.length>1?"s":""} did not match a roster name</strong> and ${state.model.unmatched.length>1?"are":"is"} not counted: ${[...new Set(state.model.unmatched.map(e=>esc(e.name||"(blank)")))].join("; ")}.</div>` : ""}
+
+  <section class="summary">
+    <div class="panel kpis">
+      <div class="kpi"><div class="eyebrow">Hours reported</div><div class="big num">${fmt(tot.total)}</div><div class="sub">${state.year} · ${fmt(allTime)} since ${START_YEAR}</div></div>
+      <div class="kpi"><div class="eyebrow">Deacons reporting</div><div class="big num">${reporting}<span style="font-size:22px;color:var(--muted)"> / ${ROSTER.length}</span></div><div class="sub">${entryCount} entr${entryCount===1?"y":"ies"} in ${state.year}</div></div>
+      <div class="kpi wide"><div class="eyebrow">Status this year</div>
+        <div class="lights">
+          ${["green","yellow","red"].map(l=>`<button class="chip" data-filter="${l}" aria-pressed="${state.status===l}"><span class="dot ${l}"></span>${STATUS_LABEL[l]} <span class="num">${counts[l]}</span></button>`).join("")}
+          ${state.status!=="all"?`<button class="chip" data-filter="all">Show all</button>`:""}
+        </div>
+        <div class="legend">
+          <span><i class="dot green"></i>6+ hours this year with hours in all three categories</span>
+          <span><i class="dot yellow"></i>Some hours, but under 6 or a category is missing</span>
+          <span><i class="dot red"></i>No hours reported this year</span>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>By category</h3>
+      <div class="bars">
+        ${CATS.map(c=>`<div class="bar-row"><span class="lab">${c}</span><span class="val num">${fmt(tot[c])} hrs</span><div class="track"><div class="fill" style="width:${pct(tot[c],maxCat)}%"></div></div></div>`).join("")}
+      </div>
+      <p class="reqnote">Three-year minimums per deacon: Spiritual 6 · Pastoral 6 · Theological 12</p>
+    </div>
+    <div class="panel">
+      <h3>By type of event</h3>
+      <div class="bars">
+        ${Object.entries(typeAgg).map(([t,v])=>`<div class="bar-row"><span class="lab">${esc(t)}</span><span class="val num">${v.count} × · ${fmt(v.hours)} hrs</span><div class="track"><div class="fill gold" style="width:${pct(v.count,maxType)}%"></div></div></div>`).join("")}
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="roster-head">
+      <h2>Deacons</h2>
+      <div class="controls">
+        <input type="search" id="q" placeholder="Search by name" value="${esc(state.q)}" aria-label="Search deacons">
+        <button id="pdfSelected" ${state.selected.size?"":"disabled"}>Export selected (${state.selected.size})</button>
+        <button id="pdfAll">Export all deacons</button>
+      </div>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead><tr>
+          <th style="width:36px"><input type="checkbox" id="selAll" aria-label="Select all shown" ${allVisibleSel?"checked":""}></th>
+          ${th("name","Deacon")}${th("light","Status")}${th("total",`Total ${state.year}`,"n")}${th("Spiritual","Spiritual","n")}${th("Pastoral","Pastoral","n")}${th("Theological","Theological","n")}${th("cycle",`${state.year-2}–${state.year} / 24`,"n")}
+        </tr></thead>
+        <tbody>
+          ${list.length ? list.map(r=>`<tr>
+            <td><input type="checkbox" class="sel" data-name="${esc(r.d.name)}" aria-label="Select ${esc(r.d.name)}" ${state.selected.has(r.d.name)?"checked":""}></td>
+            <td><a class="name" href="#${slug(r.d.name)}">${esc(r.d.name)}</a></td>
+            <td><span class="chip"><span class="dot ${r.light}"></span>${STATUS_LABEL[r.light]}</span></td>
+            <td class="n ${r.s.total?"":"zero"}"><strong>${fmt(r.s.total)}</strong></td>
+            ${CATS.map(c=>`<td class="n ${r.s[c]?"":"zero"}">${fmt(r.s[c])}</td>`).join("")}
+            <td class="n">${fmt(r.w.sum.total)}<span class="mini" aria-hidden="true"><i style="width:${pct(r.w.sum.total,24)}%"></i></span></td>
+          </tr>`).join("") : `<tr><td colspan="8" class="empty">No deacons match this filter.</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  </section>`;
+
+  $("#yearSel").onchange = e => { state.year = +e.target.value; render(); };
+  $("#q").oninput = e => { state.q = e.target.value; const pos = e.target.selectionStart; render(); const q=$("#q"); q.focus(); q.setSelectionRange(pos,pos); };
+  document.querySelectorAll("[data-filter]").forEach(b => b.onclick = () => { state.status = (state.status===b.dataset.filter ? "all" : b.dataset.filter); render(); });
+  document.querySelectorAll("[data-sort]").forEach(b => b.onclick = () => { const k=b.dataset.sort; if(state.sort===k) state.dir*=-1; else { state.sort=k; state.dir = k==="name"?1:-1; } render(); });
+  document.querySelectorAll(".sel").forEach(c => c.onchange = () => { c.checked ? state.selected.add(c.dataset.name) : state.selected.delete(c.dataset.name); render(); });
+  $("#selAll").onchange = e => { list.forEach(r => e.target.checked ? state.selected.add(r.d.name) : state.selected.delete(r.d.name)); render(); };
+  $("#pdfOverview").onclick = () => pdfOverview();
+  $("#pdfSelected").onclick = () => pdfDeacons(state.model.deacons.filter(d => state.selected.has(d.name)), "Selected");
+  $("#pdfAll").onclick = () => pdfDeacons(state.model.deacons, "All");
+}
+
+function renderDetail(d){
+  const s = yearStats(d, state.year), w = windowStats(d, state.year), light = lightFor(s);
+  const yearEntries = d.entries;
+  const bar = (label, v, m, cls="") => `<div class="bar-row"><span class="lab">${label}</span><span class="val num">${fmt(v)} / ${m} hrs</span><div class="track"><div class="fill ${v>=m?"ok":cls}" style="width:${pct(v,m)}%"></div></div></div>`;
+  const names = state.model.deacons.map(x=>x.name);
+  const idx = names.indexOf(d.name);
+  $("#app").innerHTML = `
+  <section class="picker" aria-label="Choose a deacon">
+    <label class="eyebrow" for="deaconSel">Deacon</label>
+    <select id="deaconSel">${names.map(n=>{ const l=lightFor(yearStats(state.model.deacons.find(x=>x.name===n), state.year)); return `<option value="${esc(slug(n))}" ${n===d.name?"selected":""}>${l==="green"?"● ":l==="yellow"?"◐ ":"○ "}${esc(n)}</option>`; }).join("")}</select>
+    <button id="prevD" ${idx<=0?"disabled":""} aria-label="Previous deacon">← Previous</button>
+    <button id="nextD" ${idx>=names.length-1?"disabled":""} aria-label="Next deacon">Next →</button>
+  </section>
+  <section class="detail-head">
+    <div>
+      <div class="eyebrow">Deacon report · ${state.year}</div>
+      <h1>Dcn. ${esc(d.name.split(",").slice(1).join(",").trim())} ${esc(d.name.split(",")[0])}</h1>
+    </div>
+    <div class="controls">
+      <span class="status-pill ${light}"><span class="dot ${light}"></span>${STATUS_LABEL[light]}</span>
+      <select id="yearSel" aria-label="Year">${yearOptions()}</select>
+      <button class="primary" id="pdfOne">Export PDF</button>
+    </div>
+  </section>
+
+  <section class="grid2">
+    <div class="panel">
+      <h3>${state.year} progress</h3>
+      <div class="bars">
+        ${bar("Total this year", s.total, YEAR_MIN)}
+        ${CATS.map(c=>`<div class="bar-row"><span class="lab">${c}</span><span class="val num">${fmt(s[c])} hrs</span><div class="track"><div class="fill gold" style="width:${pct(s[c], Math.max(YEAR_MIN, s.total))}%"></div></div></div>`).join("")}
+      </div>
+      <p class="reqnote">Yearly minimum is 6 hours. Green requires hours in all three categories.</p>
+    </div>
+    <div class="panel">
+      <h3>Three-year requirement · ${state.year-2}–${state.year}</h3>
+      <div class="bars">
+        ${bar("Total", w.sum.total, 24)}
+        ${CATS.map(c=>bar(c, w.sum[c], CYCLE_REQ[c])).join("")}
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h3>Year by year</h3>
+    <div class="table-scroll" style="margin-top:12px">
+      <table>
+        <thead><tr><th>Year</th><th class="n">Spiritual</th><th class="n">Pastoral</th><th class="n">Theological</th><th class="n">Total</th><th>6-hour minimum</th></tr></thead>
+        <tbody>
+          ${w.years.map(r=>`<tr><td>${r.year}${r.before?' <span class="muted">· before tracking</span>':""}</td>${CATS.map(c=>`<td class="n ${r[c]?"":"zero"}">${fmt(r[c])}</td>`).join("")}<td class="n"><strong>${fmt(r.total)}</strong></td><td>${r.before?'<span class="muted">Not applicable</span>':(r.total>=YEAR_MIN?'<span class="chip"><span class="dot green"></span>Met</span>':'<span class="chip"><span class="dot '+(r.total>0?"yellow":"red")+'"></span>'+fmt(Math.max(0,YEAR_MIN-r.total))+' hrs short</span>')}</td></tr>`).join("")}
+          <tr><td><strong>Three-year total</strong></td>${CATS.map(c=>`<td class="n"><strong>${fmt(w.sum[c])}</strong> <span class="muted">/ ${CYCLE_REQ[c]}</span></td>`).join("")}<td class="n"><strong>${fmt(w.sum.total)}</strong> <span class="muted">/ 24</span></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2 style="margin-bottom:12px">Reported entries</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Date</th><th>Event or experience</th><th>Category</th><th>Type</th><th class="n">Hours</th></tr></thead>
+        <tbody>
+          ${yearEntries.length ? yearEntries.map(e=>`<tr>
+            <td style="white-space:nowrap">${fmtDate(e.start)}${e.end && +e.end!==+e.start?` – ${fmtDate(e.end)}`:""}</td>
+            <td style="min-width:240px"><strong>${esc(e.event)}</strong>${e.description?`<div class="muted">${esc(e.description)}</div>`:""}${e.notes?`<div class="muted"><em>Note: ${esc(e.notes)}</em></div>`:""}</td>
+            <td>${esc(e.category)}</td><td>${esc(e.type)}</td><td class="n"><strong>${fmt(e.hours)}</strong></td></tr>`).join("")
+            : `<tr><td colspan="5" class="empty">No continuing education reported yet.</td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  </section>`;
+  $("#yearSel").onchange = e => { state.year = +e.target.value; render(); };
+  $("#pdfOne").onclick = () => pdfDeacons([d], d.name);
+  $("#deaconSel").onchange = e => { location.hash = e.target.value; };
+  $("#prevD").onclick = () => { if(idx>0) location.hash = slug(names[idx-1]); };
+  $("#nextD").onclick = () => { if(idx<names.length-1) location.hash = slug(names[idx+1]); };
+}
+
+function setTab(which){
+  for(const t of ["overview","individual"]){ const a = $("#tab-"+t); a.setAttribute("aria-selected", String(t===which)); }
+  $("#tab-individual").href = "#" + (state.current ? slug(state.current) : "individual");
+}
+function render(){
+  if(!state.model) return;
+  const h = location.hash.slice(1);
+  let d = h && h.startsWith("d-") && state.model.deacons.find(x => slug(x.name) === h);
+  if(!d && h === "individual") d = state.model.deacons.find(x => x.name === state.current) || state.model.deacons[0];
+  if(d){ state.current = d.name; setTab("individual"); renderDetail(d); document.title = `${d.name} · Deacon CE Tracker`; }
+  else { setTab("overview"); renderOverview(); document.title = "Deacon CE Tracker"; }
+}
+window.addEventListener("hashchange", () => { render(); window.scrollTo(0,0); });
+
+/* ---------- PDF ---------- */
+const NAVY=[10,85,135], GOLD=[201,169,78], INK=[28,36,48], MUTED=[93,104,120];
+const LIGHT_RGB = {green:[47,125,79], yellow:[201,138,15], red:[178,58,58]};
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>t.hidden=true, 2600); }
+function newDoc(orientation){
+  const { jsPDF } = window.jspdf; return new jsPDF({orientation, unit:"pt", format:"letter"});
+}
+function pdfHeader(doc, title, sub){
+  const W = doc.internal.pageSize.getWidth();
+  const lw = 260, lh = lw*LOGO_RATIO;
+  if(LOGO) doc.addImage(LOGO, "PNG", 40, 30, lw, lh);
+  doc.setDrawColor(...GOLD); doc.setLineWidth(2); doc.line(40, 40+lh, W-40, 40+lh);
+  doc.setFont("times","bold"); doc.setFontSize(18); doc.setTextColor(...NAVY); doc.text(title, 40, 66+lh);
+  doc.setFont("helvetica","normal"); doc.setFontSize(9); doc.setTextColor(...MUTED); doc.text(sub, 40, 82+lh);
+  return 96+lh;
+}
+function pdfFooter(doc){
+  const n = doc.getNumberOfPages();
+  for(let i=1;i<=n;i++){ doc.setPage(i); const W=doc.internal.pageSize.getWidth(), H=doc.internal.pageSize.getHeight();
+    doc.setFontSize(8); doc.setTextColor(...MUTED);
+    doc.text(`Archdiocese of Mobile · Office of the Permanent Diaconate · Generated ${fmtDate(new Date())}`, 40, H-24);
+    doc.text(`Page ${i} of ${n}`, W-40, H-24, {align:"right"}); }
+}
+const tableStyle = { styles:{font:"helvetica", fontSize:9, textColor:INK, cellPadding:5, lineColor:[221,227,234], lineWidth:.5}, headStyles:{fillColor:NAVY, textColor:255, fontStyle:"bold"}, alternateRowStyles:{fillColor:[245,247,250]}, margin:{left:40,right:40} };
+function save(doc, name){ try{ doc.save(name); toast(`Saved ${name}`); }catch(e){ toast("PDF could not be saved in this view."); } }
+
+function pdfOverview(){
+  const R = rows().sort((a,b)=>a.d.name.localeCompare(b.d.name));
+  const doc = newDoc("landscape");
+  const tot = {total:0, Spiritual:0, Pastoral:0, Theological:0}; R.forEach(r=>{ for(const k in tot) tot[k]+=r.s[k]; });
+  const counts = {green:0,yellow:0,red:0}; R.forEach(r=>counts[r.light]++);
+  let y = pdfHeader(doc, `Continuing Education Overview · ${state.year}`, `${state.asOf}`);
+  const typeAgg = Object.fromEntries(TYPES.map(t=>[t,{count:0,hours:0}]));
+  R.forEach(r=>r.d.entries.forEach(e=>{ if(e.year===state.year){ (typeAgg[e.type] ||= {count:0,hours:0}); typeAgg[e.type].count++; typeAgg[e.type].hours+=e.hours; } }));
+  doc.autoTable({ ...tableStyle, startY:y, tableWidth:340,
+    head:[["Summary",""]], body:[["Hours reported", fmt(tot.total)],["Spiritual", fmt(tot.Spiritual)],["Pastoral", fmt(tot.Pastoral)],["Theological", fmt(tot.Theological)],["Deacons reporting", `${R.filter(r=>r.s.total>0).length} of ${ROSTER.length}`],["On track / Needs attention / No hours", `${counts.green} / ${counts.yellow} / ${counts.red}`]],
+    columnStyles:{1:{halign:"right"}} });
+  doc.autoTable({ ...tableStyle, startY:y, margin:{left:400,right:40},
+    head:[["Type of event","Times","Hours"]], body:Object.entries(typeAgg).map(([t,v])=>[t, v.count, fmt(v.hours)]),
+    columnStyles:{1:{halign:"right"},2:{halign:"right"}} });
+  y = Math.max(doc.lastAutoTable.finalY, y) + 20;
+  doc.autoTable({ ...tableStyle, startY:y,
+    head:[["Deacon","Status",`Total ${state.year}`,"Spiritual","Pastoral","Theological",`${state.year-2}–${state.year} (of 24)`]],
+    body:R.map(r=>[r.d.name, {content:"     "+STATUS_LABEL[r.light], light:r.light}, fmt(r.s.total), fmt(r.s.Spiritual), fmt(r.s.Pastoral), fmt(r.s.Theological), fmt(r.w.sum.total)]),
+    columnStyles:{2:{halign:"right",fontStyle:"bold"},3:{halign:"right"},4:{halign:"right"},5:{halign:"right"},6:{halign:"right"}},
+    didDrawCell:d=>{ if(d.section==="body" && d.column.index===1){ const l=d.cell.raw.light; d.doc.setFillColor(...LIGHT_RGB[l]); d.doc.circle(d.cell.x+9, d.cell.y+d.cell.height/2, 4, "F"); } } });
+  pdfFooter(doc); save(doc, `Deacon-CE-Overview-${state.year}.pdf`);
+}
+
+function deaconPage(doc, d){
+  const s = yearStats(d, state.year), w = windowStats(d, state.year), light = lightFor(s);
+  const first = d.name.split(",").slice(1).join(",").trim(), last = d.name.split(",")[0];
+  let y = pdfHeader(doc, `Dcn. ${first} ${last}`, `Continuing Education Report · ${state.year} · ${state.asOf}`);
+  doc.setFillColor(...LIGHT_RGB[light]); doc.circle(46, y+2, 5, "F");
+  doc.setFont("helvetica","bold"); doc.setFontSize(10); doc.setTextColor(...LIGHT_RGB[light]); doc.text(STATUS_LABEL[light], 58, y+5.5);
+  doc.setFont("helvetica","normal"); doc.setTextColor(...INK);
+  doc.text(`${fmt(s.total)} hours in ${state.year} (minimum 6)   ·   ${fmt(w.sum.total)} of 24 hours for ${state.year-2}–${state.year}`, 160, y+5.5);
+  doc.autoTable({ ...tableStyle, startY:y+18,
+    head:[["Year","Spiritual","Pastoral","Theological","Total","6-hour minimum"]],
+    body:[...w.years.map(r=>[r.year+(r.before?" (before tracking)":""), fmt(r.Spiritual), fmt(r.Pastoral), fmt(r.Theological), fmt(r.total), r.before?"Not applicable":(r.total>=YEAR_MIN?"Met":`${fmt(YEAR_MIN-r.total)} hrs short`)]),
+      [{content:"Three-year total",styles:{fontStyle:"bold"}}, `${fmt(w.sum.Spiritual)} / 6`, `${fmt(w.sum.Pastoral)} / 6`, `${fmt(w.sum.Theological)} / 12`, {content:`${fmt(w.sum.total)} / 24`,styles:{fontStyle:"bold"}}, ""]],
+    columnStyles:{1:{halign:"right"},2:{halign:"right"},3:{halign:"right"},4:{halign:"right"}} });
+  doc.autoTable({ ...tableStyle, startY:doc.lastAutoTable.finalY+18,
+    head:[["Date","Event or experience","Category","Type","Hours"]],
+    body: d.entries.length ? d.entries.map(e=>[fmtDate(e.start)+(e.end && +e.end!==+e.start?" – "+fmtDate(e.end):""), e.event+(e.description?"\n"+e.description:"")+(e.notes?"\nNote: "+e.notes:""), e.category, e.type, fmt(e.hours)]) : [[{content:"No continuing education reported yet.", colSpan:5, styles:{halign:"center", textColor:MUTED}}]],
+    columnStyles:{0:{cellWidth:78},1:{cellWidth:230},4:{halign:"right",cellWidth:44}} });
+}
+function pdfDeacons(list, label){
+  if(!list.length) return;
+  list = [...list].sort((a,b)=>a.name.localeCompare(b.name));
+  const doc = newDoc("portrait");
+  list.forEach((d,i)=>{ if(i) doc.addPage(); deaconPage(doc, d); });
+  pdfFooter(doc);
+  const fname = list.length===1 ? `CE-${list[0].name.replace(/[^A-Za-z0-9]+/g,"-").replace(/-$/,"")}-${state.year}.pdf` : `Deacon-CE-${label}-${state.year}.pdf`;
+  save(doc, fname);
+}
+
+/* ---------- data ---------- */
+let msalApp = null, account = null, lastLoad = 0;
+
+function gate(title, message, action){
+  $("#app").innerHTML = `<section class="panel gate"><h2>${esc(title)}</h2><p>${message}</p>${action ? `<button class="primary" id="gateBtn">${esc(action.label)}</button>` : ""}</section>`;
+  if(action) $("#gateBtn").onclick = action.run;
+}
+function showWho(){
+  const w = $("#who"); if(!account){ w.hidden = true; return; }
+  w.innerHTML = `Signed in as ${esc(account.name || account.username)}<button id="signOut" type="button">Sign out</button>`;
+  w.hidden = false;
+  $("#signOut").onclick = () => msalApp.logoutRedirect({account, postLogoutRedirectUri: location.origin + "/tracker"});
+}
+async function initAuth(){
+  if(!window.msal) throw new Error("The Microsoft sign-in library did not load. Reload the page.");
+  msalApp = new msal.PublicClientApplication({
+    auth:{ clientId:CONFIG.clientId, authority:CONFIG.authority, redirectUri: location.origin + "/tracker", navigateToLoginRequestUrl:true },
+    cache:{ cacheLocation:"localStorage" }
+  });
+  await msalApp.initialize();
+  const res = await msalApp.handleRedirectPromise();
+  account = res?.account || msalApp.getActiveAccount() || msalApp.getAllAccounts()[0] || null;
+  if(account) msalApp.setActiveAccount(account);
+}
+const signIn = () => msalApp.loginRedirect({scopes:CONFIG.scopes, prompt:"select_account"});
+async function getToken(){
+  try{ return (await msalApp.acquireTokenSilent({scopes:CONFIG.scopes, account})).accessToken; }
+  catch(e){
+    if(e instanceof msal.InteractionRequiredAuthError){ await msalApp.acquireTokenRedirect({scopes:CONFIG.scopes, account}); return null; }
+    throw e;
+  }
+}
+async function graph(path, tok){
+  const r = await fetch("https://graph.microsoft.com/v1.0" + path, {headers:{Authorization:"Bearer " + tok}, cache:"no-store"});
+  if(!r.ok){ const err = new Error(`Microsoft 365 returned ${r.status}.`); err.status = r.status; throw err; }
+  return r.json();
+}
+async function fetchLive(){
+  const tok = await getToken(); if(!tok) return null;
+  const base = `/drives/${CONFIG.driveId}/items/${CONFIG.itemId}`;
+  const sheets = await graph(`${base}/workbook/worksheets?$select=name`, tok);
+  const sheet = encodeURIComponent(sheets.value[0].name);
+  const range = await graph(`${base}/workbook/worksheets/${sheet}/usedRange(valuesOnly=true)?$select=values`, tok);
+  const rows = (range.values || []).slice(1).filter(r => r.some(v => v !== "" && v != null));
+  return { entries: rows.map(r => Object.fromEntries(Object.entries(COLS).map(([k,i]) => [k, r[i] ?? ""]))) };
+}
+async function logoData(){
+  if(LOGO) return;
+  try{
+    const b = await (await fetch("/logo.png")).blob();
+    LOGO = await new Promise(res => { const fr = new FileReader(); fr.onload = () => res(fr.result); fr.readAsDataURL(b); });
+  }catch(e){ LOGO = null; }
+}
+
+async function load(manual){
+  if(state.loading) return;
+  const btn = $("#refreshBtn");
+  state.loading = true; btn.disabled = true; btn.textContent = "Refreshing…";
+  try{
+    const raw = LIVE ? await fetchLive() : SNAPSHOT;
+    if(!raw) return;                               // redirecting to sign in
+    state.model = buildModel(raw);
+    lastLoad = Date.now();
+    const stamp = new Date().toLocaleString("en-US",{month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit"});
+    state.asOf = `Refreshed ${stamp}`;
+    $("#asof").textContent = `${state.asOf} · ${raw.entries.length} response${raw.entries.length===1?"":"s"}${LIVE ? "" : " · preview copy"}`;
+    render();
+    if(manual) toast(LIVE ? "Latest responses loaded" : "Preview uses a saved copy of the responses");
+  }catch(e){
+    const denied = e.status === 401 || e.status === 403 || e.status === 404;
+    if(state.model && !denied){ toast("Could not refresh. Showing the last loaded responses."); }
+    else if(denied){ gate("No access to the response log", "Your Microsoft 365 account can't open the Deacon Continuing Education Log. Ask the Office of the Permanent Diaconate to share the file with you, then refresh.", {label:"Try again", run:() => load(true)}); }
+    else { gate("Couldn't load responses", esc(e.message || "Something went wrong reaching Microsoft 365."), {label:"Try again", run:() => load(true)}); }
+  }finally{
+    state.loading = false; btn.disabled = false; btn.textContent = "↻ Refresh";
+  }
+}
+
+(async () => {
+  $("#refreshBtn").onclick = () => load(true);
+  logoData();
+  if(!LIVE){ load(false); return; }
+  if(!CONFIG.clientId || CONFIG.clientId.startsWith("__")){
+    gate("Setup needed", "This page needs the Entra app registration's Application (client) ID before it can read the response log.");
+    $("#asof").textContent = "Not connected"; return;
+  }
+  try{ await initAuth(); }
+  catch(e){ gate("Sign-in unavailable", esc(e.message), {label:"Reload", run:() => location.reload()}); return; }
+  if(!account){
+    $("#asof").textContent = "Sign in to load responses";
+    gate("Sign in to view the tracker", "Use your Archdiocese of Mobile Microsoft 365 account. The tracker reads the Continuing Education form responses each time it opens.", {label:"Sign in with Microsoft 365", run:signIn});
+    return;
+  }
+  showWho();
+  load(false);
+  document.addEventListener("visibilitychange", () => { if(!document.hidden && state.model && Date.now() - lastLoad > 5*60*1000) load(false); });
+})();
+</script>
+</body>
+</html>
