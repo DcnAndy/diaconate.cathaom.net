@@ -44,6 +44,9 @@ body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14p
 .lh-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:flex-end}
 .letterhead button.refresh{background:#0a5587;border-color:#0a5587;color:#fff;padding:6px 12px}
 .letterhead button.refresh:disabled{opacity:.6;cursor:progress}
+.letterhead a.mainlink{margin-top:6px;display:inline-block;padding:6px 12px;border:1px solid #0a5587;border-radius:6px;color:#0a5587;background:#fff;font-weight:600;font-size:13px;text-decoration:none}
+.letterhead a.mainlink:hover{background:#eef3f8}
+.letterhead a.mainlink:focus-visible{outline:2px solid #c9a94e;outline-offset:2px}
 .who{font-size:12px;color:#4a5563}
 .who button{all:unset;cursor:pointer;color:#0a5587;font-weight:600;margin-left:6px}
 .who button:focus-visible{outline:2px solid #c9a94e}
@@ -140,6 +143,7 @@ footer.wrap{padding-block:0 32px;color:var(--muted);font-size:12px}
         <span id="asof">Loading responses…</span>
         <button id="refreshBtn" class="refresh" type="button" title="Reload the latest form responses">↻ Refresh</button>
       </div>
+      <a class="mainlink" href="/coned">← Return Main Page</a>
     </div>
   </div>
 </header>
