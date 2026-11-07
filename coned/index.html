@@ -78,6 +78,11 @@ section:first-of-type{margin-top:0}
 .btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .btn.secondary:hover{background:var(--wash)}
 
+/* Corrections note */
+.corr-note{margin:18px 0 0;color:#b3261e;font-weight:600;font-size:15px;line-height:1.45}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .corr-note{color:#ff8a80} }
+:root[data-theme="dark"] .corr-note{color:#ff8a80}
+
 /* Opportunities */
 .opps{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
 table{width:100%;border-collapse:collapse}
@@ -192,6 +197,7 @@ footer a{color:var(--navy);text-decoration:none}
         <span>Track your Continuing Education<small>See your hours toward the 3-year cycle</small></span>
       </a>
     </div>
+    <p class="corr-note">For Corrections to a Continuing Education Entry, please Submit a Request for Tech Support using the button above.</p>
   </section>
 
   <!-- Opportunities -->
