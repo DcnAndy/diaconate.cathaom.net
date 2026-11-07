@@ -1,11 +1,11 @@
-// Returns the rows of the Deacon Continuing Education Log (Microsoft Forms response workbook)
+// Returns the rows of "Deacon CE Log (Flow).xlsx" (filled by the Power Automate flow on each form submission)
 // for /tracker. Reads the workbook through its "Anyone with the link" sharing link, so no sign-in
 // or secret is needed. To point at a different link, set CE_SHARE_URL in Vercel.
 // Add ?debug=1 to see each redirect hop (status and path, no query strings) when the link fails.
 const XLSX = require("xlsx");
 
 const SHARE_URL = process.env.CE_SHARE_URL ||
-  "https://mobilearchdiocese-my.sharepoint.com/:x:/g/personal/apitts_mobarch_org1/IQAPXz0Az_CtRqCodcNNzu9XAdPyvEoV9rlfmU545ZoBz_I?e=gSLVCs";
+  "https://mobilearchdiocese-my.sharepoint.com/:x:/g/personal/apitts_mobarch_org1/IQBOeXbKziUASqBbaLn71XQeAR5oreugaKwUIc09c9jdrso?e=01tBAV";
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 
 // Follow redirects by hand so cookies SharePoint sets on the way (FedAuth for anonymous links) are sent on.
