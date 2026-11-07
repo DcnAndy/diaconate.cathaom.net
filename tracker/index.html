@@ -184,6 +184,8 @@ const pct = (v,m) => Math.max(0, Math.min(100, m ? v/m*100 : 0));
 function parseDate(v){
   if(!v) return null;
   if(typeof v === "number"){ const u = new Date(Math.round((v-25569)*864e5)); return new Date(u.getUTCFullYear(), u.getUTCMonth(), u.getUTCDate(), u.getUTCHours(), u.getUTCMinutes()); } // Excel serial, read as local time
+  const iso = String(v).match(/^(\d{4})-(\d{2})-(\d{2})$/);   // date-only from Forms/Power Automate: read as local date
+  if(iso) return new Date(+iso[1], +iso[2]-1, +iso[3]);
   const m = String(v).match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
   if(m) return new Date(+m[3], +m[1]-1, +m[2]);
   const d = new Date(v); return isNaN(d) ? null : d;
