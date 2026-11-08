@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documents and Forms | Archdiocese of Mobile</title>
+<meta name="description" content="Documents and forms for permanent deacons of the Archdiocese of Mobile.">
+<link rel="icon" href="/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Libre+Franklin:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --navy:#0a5587; --navy-ink:#073c61; --gold:#c9a94e; --gold-soft:#f4ecd4;
+  --bg:#f5f7fa; --surface:#ffffff; --ink:#1c2430; --muted:#5d6878; --line:#dde3ea; --wash:#eef3f8;
+  --display:"Cormorant Garamond", "EB Garamond", Garamond, Georgia, serif;
+  --body:"Libre Franklin", "Segoe UI", Helvetica, Arial, sans-serif;
+  --band:#ffffff;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --navy:#6fa8d6; --navy-ink:#a9cbe8; --gold:#d8bd6a; --gold-soft:#3a3322;
+  --bg:#0f151d; --surface:#17202b; --ink:#e7ecf2; --muted:#9aa7b7; --line:#2a3644; --wash:#1c2836;
+  --band:#f7f8fa; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --navy:#6fa8d6; --navy-ink:#a9cbe8; --gold:#d8bd6a; --gold-soft:#3a3322;
+  --bg:#0f151d; --surface:#17202b; --ink:#e7ecf2; --muted:#9aa7b7; --line:#2a3644; --wash:#1c2836;
+  --band:#f7f8fa; color-scheme:dark }
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--navy)}
+.wrap{width:100%;max-width:880px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+
+.letterhead{background:var(--band);border-bottom:3px solid var(--gold)}
+.letterhead .wrap{padding-block:26px;display:flex;justify-content:center}
+.letterhead img{width:100%;max-width:680px;height:auto;display:block}
+.crumbs{font-size:13px;color:var(--muted);padding-top:18px}
+.crumbs a{text-decoration:none;font-weight:600}
+.crumbs a:hover{text-decoration:underline}
+
+main.wrap{flex:1;padding-block:12px 64px}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(2rem,5vw,2.85rem);line-height:1.1;color:var(--navy-ink);text-align:center;margin:18px 0 10px;letter-spacing:.01em;text-wrap:balance}
+.rule{width:72px;height:2px;background:var(--gold);margin:0 auto 34px}
+h2{font-family:var(--display);font-weight:600;font-size:clamp(1.55rem,3.6vw,1.95rem);color:var(--navy-ink);margin:0 0 14px;line-height:1.2}
+section{margin-top:48px}
+section:first-of-type{margin-top:0}
+
+.docs{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden;list-style:none;margin:0;padding:0}
+.docs li{border-top:1px solid var(--line)}
+.docs li:first-child{border-top:0}
+.docs a{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 16px;align-items:center;padding:16px 22px;text-decoration:none;color:inherit;transition:background .15s ease}
+.docs a:hover,.docs a:focus-visible{background:var(--wash);outline:none}
+.docs a:focus-visible{box-shadow:inset 3px 0 0 var(--gold)}
+.docs .icon{width:38px;height:46px;flex:none;color:var(--navy)}
+.docs .name{font-weight:600;font-size:16px;color:var(--navy-ink)}
+.docs .desc{display:block;color:var(--muted);font-size:14px;margin-top:2px;line-height:1.45}
+.docs .meta{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--navy);white-space:nowrap;padding:4px 12px;border:1px solid var(--line);border-radius:999px;background:var(--wash)}
+@media (max-width:560px){
+  .docs a{grid-template-columns:auto minmax(0,1fr)}
+  .docs .meta{grid-column:2;justify-self:start}
+}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:8px;padding:28px 18px;text-align:center;color:var(--muted);font-size:14px}
+
+footer{text-align:center;padding:20px 16px 28px;font-size:13px;color:var(--muted);border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header class="letterhead">
+  <div class="wrap">
+    <img src="/logo.png" alt="Archdiocese of Mobile, Office of the Permanent Diaconate">
+  </div>
+</header>
+
+<main class="wrap">
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="/">&larr; Permanent Diaconate Resource Page</a></nav>
+  <h1>Documents and Forms</h1>
+  <div class="rule"></div>
+
+  <section aria-labelledby="new-h">
+    <h2 id="new-h">For New Deacons</h2>
+    <ul class="docs">
+      <li>
+        <a href="/forms/docs/Ministerial-Agreement.pdf" target="_blank" rel="noopener">
+          <svg class="icon" viewBox="0 0 38 46" aria-hidden="true"><path d="M3 1h22l10 10v32a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M25 1v10h10" fill="none" stroke="currentColor" stroke-width="2"/><text x="18" y="34" text-anchor="middle" font-size="10" font-weight="700" font-family="Libre Franklin, sans-serif" fill="currentColor">PDF</text></svg>
+          <span><span class="name">Ministerial Agreement</span><span class="desc">Three-year agreement between the deacon and his pastor (approved by his wife, if married), outlining service in Liturgy, Word, and Charity.</span></span>
+          <span class="meta">Open PDF</span>
+        </a>
+      </li>
+      <li>
+        <a href="/forms/docs/Annual-Ministry-Report-New-Deacons.pdf" target="_blank" rel="noopener">
+          <svg class="icon" viewBox="0 0 38 46" aria-hidden="true"><path d="M3 1h22l10 10v32a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M25 1v10h10" fill="none" stroke="currentColor" stroke-width="2"/><text x="18" y="34" text-anchor="middle" font-size="10" font-weight="700" font-family="Libre Franklin, sans-serif" fill="currentColor">PDF</text></svg>
+          <span><span class="name">Annual Ministry Report for New Deacons</span><span class="desc">Completed by the deacon each year: hours served and how he has exercised the ministries of Word, Liturgy, and Charity.</span></span>
+          <span class="meta">Open PDF</span>
+        </a>
+      </li>
+      <li>
+        <a href="/forms/docs/Deacon-Annual-Assessment.pdf" target="_blank" rel="noopener">
+          <svg class="icon" viewBox="0 0 38 46" aria-hidden="true"><path d="M3 1h22l10 10v32a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M25 1v10h10" fill="none" stroke="currentColor" stroke-width="2"/><text x="18" y="34" text-anchor="middle" font-size="10" font-weight="700" font-family="Libre Franklin, sans-serif" fill="currentColor">PDF</text></svg>
+          <span><span class="name">Deacon Annual Assessment</span><span class="desc">Completed by the pastor each year and reviewed with the deacon, including focus areas for the next twelve months.</span></span>
+          <span class="meta">Open PDF</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="other-h">
+    <h2 id="other-h">Other Documents</h2>
+    <div class="empty">Documents will be posted here soon.</div>
+  </section>
+</main>
+
+<footer>
+  <div>&copy; <span id="yr">2026</span> Archdiocese of Mobile &middot; Office of the Permanent Diaconate</div>
+</footer>
+<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+</body>
+</html>
