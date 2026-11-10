@@ -5,7 +5,7 @@
 const XLSX = require("xlsx");
 
 const SHARE_URL = process.env.CE_OPPS_SHARE_URL ||
-  "https://mobilearchdiocese-my.sharepoint.com/:x:/g/personal/apitts_mobarch_org1/IQCDN39mVOlVQapxTM1pl_-8AYdJe4EIWuyRrGChYVCQwdA?e=GwuVaF";
+  "https://mobilearchdiocese-my.sharepoint.com/:x:/g/personal/apitts_mobarch_org1/IQCDN39mVOlVQapxTM1pl_-8AYdJe4EIWuyRrGChYVCQwdA?e=2Ms7NQ";
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
 
 // Follow redirects by hand so cookies SharePoint sets on the way (FedAuth for anonymous links) are sent on.
