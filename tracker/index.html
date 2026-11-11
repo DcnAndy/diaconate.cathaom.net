@@ -237,7 +237,9 @@ function rows(){
 
 /* ---------- rendering ---------- */
 function yearOptions(){
-  const now = Math.max(new Date().getFullYear(), START_YEAR);
+  // Run from the latest year that has any entry (e.g. pre-loaded future events) down to 2026.
+  const dataMax = Math.max(0, ...state.model.deacons.flatMap(d => d.entries.map(e => e.year || 0)));
+  const now = Math.max(new Date().getFullYear(), START_YEAR, dataMax);
   let o = ""; for(let y = now; y >= START_YEAR; y--) o += `<option value="${y}" ${y===state.year?"selected":""}>${y}</option>`;
   return o;
 }
